@@ -1,3 +1,6 @@
+import { header, footer, main } from './commenElements';
+import './styles/style.css';
+
 const API_KEY = '609792093f4e99ef7fccf02e63687043';
 
 function validateHttpRequest(response) {
@@ -33,12 +36,14 @@ function getGeoLocation(cityName = 'Brussels') {
   return location;
 }
 
-getGeoLocation('london')
-  .then((response) => {
-    const { lat } = response[0];
-    const { lon } = response[0];
-    getWeather(lat, lon).then(displayWeather);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+// getGeoLocation('london')
+//   .then((response) => {
+//     const { lat } = response[0];
+//     const { lon } = response[0];
+//     getWeather(lat, lon).then(displayWeather);
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
+
+document.body.append(header.getHeader('weather at'), main, footer);

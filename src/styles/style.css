@@ -1,0 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+@import './reset.css';
+@import '../assets/css/all.css';
+
+:root {
+  --light-text-color: #fff;
+  --dark-text-color: #000;
+}
+
+.sr-only:not(:focus):not(:active) {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+html {
+  font-family: Roboto, sans-serif;
+  font-size: 62.5%;
+}
+
+body {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+}
+
+header {
+  background-color: #fff;
+  box-shadow: 0 4px 4px 0 rgba(89, 89, 89, 0.25);
+  font-size: 3rem;
+  height: 8rem;
+  line-height: 8rem;
+  text-align: center;
+  text-transform: capitalize;
+}
+
+a {
+  color: var(--dark-text-color);
+  text-decoration: none;
+}
+
+main {
+  padding: 3.5rem 3rem;
+}
+
+footer {
+  background-color: #fff;
+  box-shadow: rgba(89, 89, 89, 0.25) 0 -4px 4px 0;
+  font-size: 1.2rem;
+  line-height: 5rem;
+  min-height: 5rem;
+  text-align: center;
+  text-transform: capitalize;
+}
+
+@media (hover :hover) {
+
+  a:hover {
+      text-decoration: underline;
+  }
+}
