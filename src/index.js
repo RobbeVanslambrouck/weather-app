@@ -32,27 +32,11 @@ function getGeoLocation(cityName = 'Brussels') {
   return location;
 }
 
-document.body.append(header.getHeader('weather at'), main, footer);
+const WeatherBoard = (() => {
+  const board = document.createElement('div');
+  board.className = 'weatherBoard';
 
-const LocationForm = (() => {
-  const form = document.createElement('form');
-  const input = document.createElement('input');
-  const btnSubmit = document.createElement('button');
-  form.onsubmit = async (e) => {
-    e.preventDefault();
-    if (!input.value) {
-      return;
-    }
-
-    let response = await getGeoLocation(input.value);
-    const { lat, lon, name } = response[0];
-    response = await getWeather(lat, lon);
-    displayWeather(response, name);
-  };
-  btnSubmit.textContent = 'search';
-
-  form.append(input, btnSubmit);
-  return form;
+  return board;
 })();
 
 // temp: in kelvin
@@ -106,28 +90,46 @@ const WeatherAtCard = (location = '', desc = '', temp = 0) => {
   return { getCard, desc };
 };
 
-let weatherCard = WeatherAtCard();
-
 function displayWeather(json, location = '') {
+  let weatherCard = WeatherAtCard();
   console.log(json);
   const { temp } = json.main;
   const { description } = json.weather[0];
   weatherCard = WeatherAtCard(location, description, temp);
-  main.innerHTML = '';
-  main.append(LocationForm, weatherCard.getCard());
+  WeatherBoard.innerHTML = '';
+  WeatherBoard.append(weatherCard.getCard());
 }
 
-getGeoLocation('london')
-  .then((response) => {
-    const { lat } = response[0];
-    const { lon } = response[0];
-    const { name } = response[0];
-    getWeather(lat, lon).then((response) => {
-      displayWeather(response, name);
-    });
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+const LocationForm = (() => {
+  const form = document.createElement('form');
+  const input = document.createElement('input');
+  const btnSubmit = document.createElement('button');
+  form.onsubmit = async (e) => {
+    e.preventDefault();
+    if (!input.value) {
+      return;
+    }
 
-main.append(LocationForm);
+    let response = await getGeoLocation(input.value);
+    const { lat, lon, name } = response[0];
+    response = await getWeather(lat, lon);
+    displayWeather(response, name);
+  };
+  btnSubmit.textContent = 'search';
+
+  form.append(input, btnSubmit);
+  return form;
+})();
+
+async function app() {
+  document.body.append(header.getHeader('weather at'), main, footer);
+
+  main.append(LocationForm, WeatherBoard);
+
+  let response = await getGeoLocation('london');
+  const { lat, lon, name } = response[0];
+  response = await getWeather(lat, lon);
+  displayWeather(response, name);
+}
+
+app();
