@@ -38,6 +38,17 @@ const LocationForm = (() => {
   const form = document.createElement('form');
   const input = document.createElement('input');
   const btnSubmit = document.createElement('button');
+  form.onsubmit = async (e) => {
+    e.preventDefault();
+    if (!input.value) {
+      return;
+    }
+
+    let response = await getGeoLocation(input.value);
+    const { lat, lon, name } = response[0];
+    response = await getWeather(lat, lon);
+    displayWeather(response, name);
+  };
   btnSubmit.textContent = 'search';
 
   form.append(input, btnSubmit);
@@ -45,7 +56,7 @@ const LocationForm = (() => {
 })();
 
 // temp: in kelvin
-const WeatherAtCard = (desc = '', temp = 0) => {
+const WeatherAtCard = (location = '', desc = '', temp = 0) => {
   const kelvin = temp;
   const celcius = temp - 273.15;
   const fahrenheit = temp * (9 / 5) - 459.67;
@@ -60,19 +71,19 @@ const WeatherAtCard = (desc = '', temp = 0) => {
   const getCard = () => {
     const card = document.createElement('div');
     const weatherInfo = document.createElement('div');
+    const weatherlocation = document.createElement('p');
+    weatherlocation.textContent = location;
     const weatherDesc = document.createElement('p');
     weatherDesc.textContent = desc;
     const tempText = document.createElement('p');
     tempText.textContent = `${Math.round(celcius)}°C`;
-    weatherInfo.append(weatherDesc, tempText);
+    weatherInfo.append(weatherlocation, weatherDesc, tempText);
 
     const cardControls = document.createElement('div');
     const btnChangeUnit = document.createElement('button');
     btnChangeUnit.textContent = 'change Unit';
     btnChangeUnit.onclick = () => {
       current = changeTo[current];
-      console.log(current);
-
       if (current === 'celcius') {
         displayTemp = celcius;
         displaySym = '°C';
@@ -97,11 +108,11 @@ const WeatherAtCard = (desc = '', temp = 0) => {
 
 let weatherCard = WeatherAtCard();
 
-function displayWeather(json) {
+function displayWeather(json, location = '') {
   console.log(json);
   const { temp } = json.main;
   const { description } = json.weather[0];
-  weatherCard = WeatherAtCard(description, temp);
+  weatherCard = WeatherAtCard(location, description, temp);
   main.innerHTML = '';
   main.append(LocationForm, weatherCard.getCard());
 }
@@ -110,7 +121,10 @@ getGeoLocation('london')
   .then((response) => {
     const { lat } = response[0];
     const { lon } = response[0];
-    getWeather(lat, lon).then(displayWeather);
+    const { name } = response[0];
+    getWeather(lat, lon).then((response) => {
+      displayWeather(response, name);
+    });
   })
   .catch((err) => {
     console.log(err);
