@@ -40,18 +40,43 @@ const WeatherBoard = (() => {
 })();
 
 // temp: in kelvin
-const WeatherAtCard = (location = '', desc = '', temp = 0) => {
+const WeatherAtCard = (
+  location = '',
+  desc = '',
+  temp = 0,
+  unit = 'celcius',
+) => {
   const kelvin = temp;
   const celcius = temp - 273.15;
   const fahrenheit = temp * (9 / 5) - 459.67;
-  let current = 'celcius';
-  let displayTemp = celcius;
-  let displaySym = '°C';
+
+  let currentUnit = unit;
+  let displayTemp;
+  let displaySym;
+
+  const changeUnit = (to) => {
+    currentUnit = to;
+    if (to === 'celcius') {
+      displayTemp = celcius;
+      displaySym = '°C';
+    }
+    if (to === 'fahrenheit') {
+      displayTemp = fahrenheit;
+      displaySym = '°F';
+    }
+    if (to === 'kelvin') {
+      displayTemp = kelvin;
+      displaySym = 'K';
+    }
+  };
+
+  changeUnit(currentUnit);
   const changeTo = {
     celcius: 'fahrenheit',
     fahrenheit: 'kelvin',
     kelvin: 'celcius',
   };
+
   const getCard = () => {
     const card = document.createElement('div');
     const weatherInfo = document.createElement('div');
@@ -60,26 +85,15 @@ const WeatherAtCard = (location = '', desc = '', temp = 0) => {
     const weatherDesc = document.createElement('p');
     weatherDesc.textContent = desc;
     const tempText = document.createElement('p');
-    tempText.textContent = `${Math.round(celcius)}°C`;
+    tempText.textContent = `${Math.round(displayTemp)}${displaySym}`;
     weatherInfo.append(weatherlocation, weatherDesc, tempText);
 
     const cardControls = document.createElement('div');
     const btnChangeUnit = document.createElement('button');
     btnChangeUnit.textContent = 'change Unit';
     btnChangeUnit.onclick = () => {
-      current = changeTo[current];
-      if (current === 'celcius') {
-        displayTemp = celcius;
-        displaySym = '°C';
-      }
-      if (current === 'fahrenheit') {
-        displayTemp = fahrenheit;
-        displaySym = '°F';
-      }
-      if (current === 'kelvin') {
-        displayTemp = kelvin;
-        displaySym = 'K';
-      }
+      currentUnit = changeTo[currentUnit];
+      changeUnit(changeTo[currentUnit]);
       tempText.textContent = `${Math.round(displayTemp)}${displaySym}`;
     };
     cardControls.append(btnChangeUnit);
@@ -90,12 +104,14 @@ const WeatherAtCard = (location = '', desc = '', temp = 0) => {
   return { getCard, desc };
 };
 
-function displayWeather(json, location = '') {
-  let weatherCard = WeatherAtCard();
-  console.log(json);
+function displayWeather(json, location = '', country = '') {
   const { temp } = json.main;
   const { description } = json.weather[0];
-  weatherCard = WeatherAtCard(location, description, temp);
+  let unit = 'celcius';
+  if (country === 'US') {
+    unit = 'fahrenheit';
+  }
+  const weatherCard = WeatherAtCard(location, description, temp, unit);
   WeatherBoard.innerHTML = '';
   WeatherBoard.append(weatherCard.getCard());
 }
@@ -111,9 +127,9 @@ const LocationForm = (() => {
     }
 
     let response = await getGeoLocation(input.value);
-    const { lat, lon, name } = response[0];
+    const { lat, lon, name, country } = response[0];
     response = await getWeather(lat, lon);
-    displayWeather(response, name);
+    displayWeather(response, name, country);
   };
   btnSubmit.textContent = 'search';
 
