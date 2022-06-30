@@ -1,4 +1,5 @@
 import { header, footer, main } from './commenElements';
+import { dayIcons, nightIcons } from './images';
 import './styles/style.css';
 
 const API_KEY = '609792093f4e99ef7fccf02e63687043';
@@ -40,17 +41,17 @@ const WeatherBoard = (() => {
 })();
 
 // temp: in kelvin
-const WeatherAtCard = (
-  location = '',
-  desc = '',
-  temp = 0,
-  unit = 'celcius',
-) => {
+const WeatherAtCard = (weather = {}, location = {}) => {
+  const { temp } = weather.main;
   const kelvin = temp;
   const celcius = temp - 273.15;
   const fahrenheit = temp * (9 / 5) - 459.67;
 
-  let currentUnit = unit;
+  let currentUnit = 'celcius';
+  if (location.country === 'US') {
+    currentUnit = 'fahrenheit';
+  }
+
   let displayTemp;
   let displaySym;
 
@@ -77,16 +78,31 @@ const WeatherAtCard = (
     kelvin: 'celcius',
   };
 
+  const getWeatherIcon = () => {
+    const weatherIconId = weather.weather[0].id;
+    const day =
+      weather.sys.sunrise < weather.dt && weather.sys.sunset > weather.dt;
+    if (day) {
+      return dayIcons[weatherIconId];
+    }
+    return nightIcons[weatherIconId];
+  };
+
   const getCard = () => {
     const card = document.createElement('div');
     const weatherInfo = document.createElement('div');
     const weatherlocation = document.createElement('p');
-    weatherlocation.textContent = location;
+    weatherlocation.textContent = `${location.name}, ${location.country}`;
+    const weatherDescIcon = document.createElement('img');
+    weatherDescIcon.alt = weather.description;
+    weatherDescIcon.style.backgroundColor = 'black';
+    weatherDescIcon.style.width = '10%';
+    weatherDescIcon.src = getWeatherIcon();
     const weatherDesc = document.createElement('p');
-    weatherDesc.textContent = desc;
+    weatherDesc.textContent = weather.weather[0].description;
     const tempText = document.createElement('p');
     tempText.textContent = `${Math.round(displayTemp)}${displaySym}`;
-    weatherInfo.append(weatherlocation, weatherDesc, tempText);
+    weatherInfo.append(weatherlocation, weatherDescIcon, weatherDesc, tempText);
 
     const cardControls = document.createElement('div');
     const btnChangeUnit = document.createElement('button');
@@ -101,17 +117,11 @@ const WeatherAtCard = (
     return card;
   };
 
-  return { getCard, desc };
+  return { getCard };
 };
 
-function displayWeather(json, location = '', country = '') {
-  const { temp } = json.main;
-  const { description } = json.weather[0];
-  let unit = 'celcius';
-  if (country === 'US') {
-    unit = 'fahrenheit';
-  }
-  const weatherCard = WeatherAtCard(location, description, temp, unit);
+function displayWeather(weather, location) {
+  const weatherCard = WeatherAtCard(weather, location);
   WeatherBoard.innerHTML = '';
   WeatherBoard.append(weatherCard.getCard());
 }
@@ -129,7 +139,7 @@ const LocationForm = (() => {
     let response = await getGeoLocation(input.value);
     const { lat, lon, name, country } = response[0];
     response = await getWeather(lat, lon);
-    displayWeather(response, name, country);
+    displayWeather(response, { name, country });
   };
   btnSubmit.textContent = 'search';
 
@@ -141,11 +151,9 @@ async function app() {
   document.body.append(header.getHeader('weather at'), main, footer);
 
   main.append(LocationForm, WeatherBoard);
-
-  let response = await getGeoLocation('london');
-  const { lat, lon, name } = response[0];
-  response = await getWeather(lat, lon);
-  displayWeather(response, name);
+  const location = await getGeoLocation('london');
+  const weather = await getWeather(location[0].lat, location[0].lon);
+  displayWeather(weather, location[0]);
 }
 
 app();
