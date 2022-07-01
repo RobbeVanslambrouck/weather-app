@@ -128,8 +128,14 @@ function displayWeather(weather, location) {
 
 const LocationForm = (() => {
   const form = document.createElement('form');
+  form.className = 'location-form';
   const input = document.createElement('input');
   const btnSubmit = document.createElement('button');
+  btnSubmit.className = 'search-btn fa-solid fa-magnifying-glass-location';
+  const btnSubmitText = document.createElement('p');
+  btnSubmitText.textContent = 'search';
+  btnSubmitText.className = 'sr-only';
+  btnSubmit.append(btnSubmitText);
   form.onsubmit = async (e) => {
     e.preventDefault();
     if (!input.value) {
@@ -141,7 +147,6 @@ const LocationForm = (() => {
     response = await getWeather(lat, lon);
     displayWeather(response, { name, country });
   };
-  btnSubmit.textContent = 'search';
 
   form.append(input, btnSubmit);
   return form;
