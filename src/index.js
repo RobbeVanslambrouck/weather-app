@@ -12,14 +12,15 @@ function validateHttpRequest(response) {
   return Promise.reject(msg);
 }
 
-const CORS = process.env.NODE_ENV === 'production' ? '' : 'cors';
+let FETCH_PROPS = {};
+if (process.env.NODE_ENV !== 'production') {
+  FETCH_PROPS = { mode: 'cors' };
+}
 
 function getWeather(lat, lon) {
   const weather = fetch(
     `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}`,
-    {
-      mode: CORS,
-    },
+    FETCH_PROPS,
   ).then(validateHttpRequest);
   return weather;
 }
@@ -28,9 +29,7 @@ function getGeoLocation(cityName = 'Brussels') {
   const limit = 1;
   const location = fetch(
     `https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=${limit}&appid=${API_KEY}`,
-    {
-      mode: CORS,
-    },
+    FETCH_PROPS,
   ).then(validateHttpRequest);
   return location;
 }
