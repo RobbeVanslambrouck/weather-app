@@ -45,7 +45,7 @@ a {
 }
 
 main {
-  padding: 3.5rem 3rem;
+  padding: 3.5rem 0rem;
 }
 
 .location-form {
@@ -61,10 +61,12 @@ main {
   box-shadow: rgba(89, 89, 89, 0.25) 1px 2px 2px 0;
   border: 1px #000 solid;
   border-radius: 0.5rem;
+  max-width: calc(100vw - 6rem);
 }
 
 .location-form button {
   font-size: inherit;
+  text-align: center;
   color: #E96A4E;
   background-color: white;
   border: 1px #595959 solid;
@@ -92,6 +94,7 @@ main {
 .current-weather-card {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 1.2rem;
 }
 
@@ -115,6 +118,7 @@ main {
 .weather-icon {
   filter: invert(51%) sepia(78%) saturate(1705%) hue-rotate(332deg) brightness(100%) contrast(84%);
   min-width: 10rem;
+  width: min(25vw, 25vh);
 }
 
 .weather-description {
