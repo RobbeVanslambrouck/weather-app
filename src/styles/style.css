@@ -53,6 +53,7 @@ main {
   gap: 1rem;
   justify-content: center;
   font-size: 2.5rem;
+  margin-bottom: 5rem;
 }
 
 .location-form input {
@@ -64,8 +65,8 @@ main {
 
 .location-form button {
   font-size: inherit;
-  color: #EA6E4C;
-  background-color: rgba(89, 89, 89, 0.05);
+  color: #E96A4E;
+  background-color: white;
   border: 1px #595959 solid;
   border-radius: 0.5rem;
   cursor: pointer;
@@ -74,12 +75,50 @@ main {
 
 .location-form button:active {
   box-shadow: none;
-  cursor: grab;
+  cursor: grabbing;
   transform: translate(0, 2px);
 }
 
 .location-form input:focus {
   box-shadow: none;
+}
+
+.weather-board {
+  display: grid;
+  justify-content: center;
+  text-align: center;
+}
+
+.current-weather-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.location-name {
+  font-size: 4rem;
+}
+
+.temperature {
+  font-size: 4rem;
+  cursor: pointer;
+}
+
+.temperature:hover {
+  color: #E96A4E;
+}
+
+.temperature:active {
+  cursor: grabbing;
+}
+
+.weather-icon {
+  filter: invert(51%) sepia(78%) saturate(1705%) hue-rotate(332deg) brightness(100%) contrast(84%);
+  min-width: 10rem;
+}
+
+.weather-description {
+  font-size: 2.5rem;
 }
 
 footer {

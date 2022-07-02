@@ -35,7 +35,7 @@ function getGeoLocation(cityName = 'Brussels') {
 
 const WeatherBoard = (() => {
   const board = document.createElement('div');
-  board.className = 'weatherBoard';
+  board.className = 'weather-board';
 
   return board;
 })();
@@ -90,30 +90,27 @@ const WeatherAtCard = (weather = {}, location = {}) => {
 
   const getCard = () => {
     const card = document.createElement('div');
-    const weatherInfo = document.createElement('div');
+    card.className = 'current-weather-card';
     const weatherlocation = document.createElement('p');
+    weatherlocation.className = 'location-name';
     weatherlocation.textContent = `${location.name}, ${location.country}`;
     const weatherDescIcon = document.createElement('img');
+    weatherDescIcon.className = 'weather-icon';
     weatherDescIcon.alt = weather.description;
-    weatherDescIcon.style.backgroundColor = 'black';
-    weatherDescIcon.style.width = '10%';
     weatherDescIcon.src = getWeatherIcon();
     const weatherDesc = document.createElement('p');
+    weatherDesc.className = 'weather-description';
     weatherDesc.textContent = weather.weather[0].description;
     const tempText = document.createElement('p');
+    tempText.className = 'temperature';
     tempText.textContent = `${Math.round(displayTemp)}${displaySym}`;
-    weatherInfo.append(weatherlocation, weatherDescIcon, weatherDesc, tempText);
+    card.append(weatherlocation, tempText, weatherDescIcon, weatherDesc);
 
-    const cardControls = document.createElement('div');
-    const btnChangeUnit = document.createElement('button');
-    btnChangeUnit.textContent = 'change Unit';
-    btnChangeUnit.onclick = () => {
+    tempText.onclick = () => {
       currentUnit = changeTo[currentUnit];
       changeUnit(changeTo[currentUnit]);
       tempText.textContent = `${Math.round(displayTemp)}${displaySym}`;
     };
-    cardControls.append(btnChangeUnit);
-    card.append(weatherInfo, cardControls);
     return card;
   };
 
@@ -130,6 +127,7 @@ const LocationForm = (() => {
   const form = document.createElement('form');
   form.className = 'location-form';
   const input = document.createElement('input');
+  input.type = 'text';
   const btnSubmit = document.createElement('button');
   btnSubmit.className = 'search-btn fa-solid fa-magnifying-glass-location';
   const btnSubmitText = document.createElement('p');
