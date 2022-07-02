@@ -12,11 +12,13 @@ function validateHttpRequest(response) {
   return Promise.reject(msg);
 }
 
+const CORS = process.env.NODE_ENV === 'production' ? '' : 'cors';
+
 function getWeather(lat, lon) {
   const weather = fetch(
     `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}`,
     {
-      mode: 'cors',
+      mode: CORS,
     },
   ).then(validateHttpRequest);
   return weather;
@@ -27,7 +29,7 @@ function getGeoLocation(cityName = 'Brussels') {
   const location = fetch(
     `https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=${limit}&appid=${API_KEY}`,
     {
-      mode: 'cors',
+      mode: CORS,
     },
   ).then(validateHttpRequest);
   return location;
